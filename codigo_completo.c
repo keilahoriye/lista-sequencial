@@ -25,6 +25,7 @@ typedef struct {
 // Declaração das funções
 void inicializarLista(LISTA* l);
 void exibirLista(LISTA* l);
+void resize(LISTA* l);
 int tamanho(LISTA* l);
 int tamanhoEmBytes(LISTA* l);
 TIPOCHAVE primeiroElem(LISTA* l);
@@ -51,7 +52,6 @@ void inicializarLista(LISTA* l){
   l->A = (REGISTRO*)malloc(l->capacidade * sizeof(REGISTRO));
 } /* inicializarLista */
 
-
 /* Exibição da lista sequencial */
 void exibirLista(LISTA* l){
   int i;
@@ -61,16 +61,22 @@ void exibirLista(LISTA* l){
   printf("\"\n");
 } /* exibirLista */ 
 
+void resize(LISTA* l) {
+  if (l->nroElem >= l->capacidade) {
+    l->capacidade *= 2;
+  } else if (l->nroElem <= l->capacidade / 4 && l->capacidade > 4) {
+    l->capacidade /= 2;
+  }
+
+  l->A = (REGISTRO*)realloc(l->A, l->capacidade * sizeof(REGISTRO));
+}
+
 /* Retornar o tamanho da lista (numero de elementos "validos") */
 int tamanho(LISTA* l) {
   return l->nroElem;
 } /* tamanho */
 
-/* Retornar o tamanho em bytes da lista. Neste caso, isto nao depende do numero
-   de elementos que estao sendo usados, pois a alocacao de memoria eh estatica.
-   A priori, nao precisariamos do ponteiro para a lista, vamos utiliza-lo apenas
-   porque teremos as mesmas funcoes para listas ligadas.   
-*/
+/* Retornar o tamanho em bytes da lista. */
 int tamanhoEmBytes(LISTA* l) {
   return l->capacidade * sizeof(REGISTRO) + sizeof(int) * 2;
 } /* tamanhoEmBytes */
@@ -124,10 +130,8 @@ bool excluirElemListaOrd(LISTA* l, TIPOCHAVE ch) {
   for(j = pos; j < l->nroElem-1; j++)l->A[j] = l->A[j+1];
   l->nroElem--;
 
-  if (l->nroElem <= l->capacidade / 4 && l->capacidade > 4) {
-    l->capacidade /= 2;
-    l->A = (REGISTRO*)realloc(l->A, l->capacidade * sizeof(REGISTRO));
-  }
+  resize(l);
+  
   return true;
 } /* excluirElemListaOrd */
 
@@ -141,10 +145,7 @@ void finalizarLista(LISTA* l) {
 
 /* Inserção em lista ordenada usando busca binária permitindo duplicação */
 bool inserirElemListaOrd(LISTA* l, REGISTRO reg) {
-  if(l->nroElem >= l->capacidade) {
-    l->capacidade *= 2;
-    l->A = (REGISTRO*)realloc(l->A, l->capacidade * sizeof(REGISTRO));
-  }
+  resize(l);
     
   int pos = l->nroElem;
   while(pos > 0 && l->A[pos-1].chave > reg.chave) {
