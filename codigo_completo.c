@@ -48,7 +48,6 @@ void inicializarLista(LISTA* l){
   l->nroElem = 0;
   l->capacidade = 10;
   l->A = (REGISTRO*)malloc(l->capacidade * sizeof(REGISTRO));
-  }
 } /* inicializarLista */
 
 
@@ -72,7 +71,7 @@ int tamanho(LISTA* l) {
    porque teremos as mesmas funcoes para listas ligadas.   
 */
 int tamanhoEmBytes(LISTA* l) {
-  return sizeof(LISTA);
+  return l->capacidade * sizeof(REGISTRO) + sizeof(int) * 2;
 } /* tamanhoEmBytes */
 
 /* Retornar a chave do primeiro elemento da lista sequencial (caso haja) e ERRO
@@ -155,6 +154,7 @@ bool inserirElemListaOrd(LISTA* l, REGISTRO reg) {
 int main() {
   LISTA lista;
   REGISTRO reg;
+  int numElementos, chave;
 
   // Inicializar a lista
   inicializarLista(&lista);
@@ -164,17 +164,15 @@ int main() {
   printf("Numero de elementos na lista: %i.\n", tamanho(&lista));
   printf("Tamanho da lista (em bytes): %i.\n", tamanhoEmBytes(&lista));
 
-  // Inserir elementos na lista
-  reg.chave = 9;
-  inserirElemListaOrd(&lista, reg);
-  reg.chave = 3;
-  inserirElemListaOrd(&lista, reg);
-  reg.chave = 4;
-  inserirElemListaOrd(&lista, reg);
-  reg.chave = 1;
-  inserirElemListaOrd(&lista, reg);
-  reg.chave = 12;
-  inserirElemListaOrd(&lista, reg);
+  // Solicitar ao usuário
+  printf("Digite o número de elementos que deseja inserir: ");
+  scanf("%d", &numElementos);
+  for (int i=0; i < numElementos; i++) {
+    printf("Digite o %dº elemento: ", i + 1);
+    scanf("%d", &chave);
+    reg.chave = chave;
+    inserirElemListaOrd(&lista, reg);
+  }
 
   // Exibir lista após inserções
   exibirLista(&lista);
@@ -182,13 +180,25 @@ int main() {
   printf("Tamanho da lista (em bytes): %i.\n", tamanhoEmBytes(&lista));
 
   // Buscar um elemento na lista
-  int pos = buscaBinaria(&lista, 4);
-  printf("Chave 4 encontrada na posicao: %i do arranjo A.\n", pos);
+  printf("Digite qual elemento quer buscar: ");
+  scanf("%d", &chave);
+  int pos = buscaBinaria(&lista, chave);
+  if (pos != ERRO){
+    printf("Chave %d encontrada na posicao: %i do arranjo A.\n", chave, pos);
+  } else {
+    printf("Chave %d não encontrada.\n", chave);
+  }
+  
+
 
   // Excluir alguns elementos da lista
-  if (excluirElemListaOrd(&lista, 4)) printf("Exclusao bem sucedida: 4.\n");
-  if (excluirElemListaOrd(&lista, 8)) printf("Exclusao bem sucedida: 8 (não existe na lista).\n");
-  if (excluirElemListaOrd(&lista, 9)) printf("Exclusao bem sucedida: 9.\n");
+  printf("Digite qual elemento quer excluir: ");
+  scanf("%d", &chave);
+  if (excluirElemListaOrd(&lista, chave)) {
+    printf("Exclusao bem sucedida: %d.\n", chave);
+  } else {
+    printf("Elemento %d não encontrado.\n", chave);
+  }
 
   // Exibir lista após exclusões
   exibirLista(&lista);
