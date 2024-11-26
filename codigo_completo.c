@@ -31,6 +31,7 @@ TIPOCHAVE primeiroElem(LISTA* l);
 TIPOCHAVE ultimoElem(LISTA* l);
 TIPOCHAVE enesimoElem(LISTA* l, int n);
 void reinicializarLista(LISTA* l);
+void finalizarLista(LISTA* l);
 int buscaSequencial(LISTA* l, TIPOCHAVE ch);
 int buscaSentinela(LISTA* l, TIPOCHAVE ch);
 int buscaSentinelaOrdenada(LISTA* l, TIPOCHAVE ch);
@@ -123,13 +124,19 @@ bool excluirElemListaOrd(LISTA* l, TIPOCHAVE ch) {
   for(j = pos; j < l->nroElem-1; j++)l->A[j] = l->A[j+1];
   l->nroElem--;
 
-  if (l->nroElem <= l->capacidade / 4 && l-> capacidade > 4) {
+  if (l->nroElem <= l->capacidade / 4 && l->capacidade > 4) {
     l->capacidade /= 2;
     l->A = (REGISTRO*)realloc(l->A, l->capacidade * sizeof(REGISTRO));
   }
-
   return true;
 } /* excluirElemListaOrd */
+
+void finalizarLista(LISTA* l) {
+  free(l->A);
+  l->A = NULL;
+  l->nroElem = 0;
+  l->capacidade = 0;
+}
 
 
 /* Inserção em lista ordenada usando busca binária permitindo duplicação */
@@ -207,6 +214,7 @@ int main() {
 
   // Reinicializar a lista
   reinicializarLista(&lista);
+  finalizarLista(&lista);
   exibirLista(&lista);
   printf("Numero de elementos na lista: %i.\n", tamanho(&lista));
   printf("Tamanho da lista (em bytes): %i.\n", tamanhoEmBytes(&lista));
