@@ -48,7 +48,7 @@ bool inserirElemListaOrdSemDup(LISTA* l, REGISTRO reg);
 /* Inicialização da lista sequencial (a lista já está criada e é apontada pelo endereço em l) */
 void inicializarLista(LISTA* l){
   l->nroElem = 0;
-  l->capacidade = 50;
+  l->capacidade = 10;
   l->A = (REGISTRO*)malloc(l->capacidade * sizeof(REGISTRO));
 } /* inicializarLista */
 
@@ -162,7 +162,7 @@ bool inserirElemListaOrd(LISTA* l, REGISTRO reg) {
 int main() {
   LISTA lista;
   REGISTRO reg;
-  int numElementos, chave;
+  int numElementos, numeroElementos, chave;
 
   // Inicializar a lista
   inicializarLista(&lista);
@@ -192,18 +192,22 @@ int main() {
   scanf("%d", &chave);
   int pos = buscaBinaria(&lista, chave);
   if (pos != ERRO){
-    printf("Chave %d encontrada na posicao: %i do arranjo A.\n", chave, pos);
+    printf("Chave %d encontrada na posicao: %i.\n", chave, pos);
   } else {
     printf("Chave %d não encontrada.\n", chave);
   }
 
   // Excluir alguns elementos da lista
-  printf("Digite qual elemento quer excluir: ");
-  scanf("%d", &chave);
-  if (excluirElemListaOrd(&lista, chave)) {
-    printf("Exclusao bem sucedida: %d.\n", chave);
-  } else {
-    printf("Elemento %d não encontrado.\n", chave);
+  printf("Digite o número de elementos que deseja excluir: ");
+  scanf("%d", &numeroElementos);
+  for (int i=0; i < numeroElementos; i++) {
+    printf("Digite o %dº elemento: ", i + 1);
+    scanf("%d", &chave);
+    if (excluirElemListaOrd(&lista, chave)) {
+      printf("Exclusao bem sucedida: %d.\n", chave);
+    } else {
+      printf("Elemento %d não encontrado.\n", chave);
+    }
   }
 
   // Exibir lista após exclusões
