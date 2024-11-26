@@ -97,37 +97,6 @@ void reinicializarLista(LISTA* l) {
   l->nroElem = 0;
 } /* reinicializarLista */
 
-
-/* Busca sequencial em lista ordenada ou não SEM SENTINELA */
-int buscaSequencial(LISTA* l, TIPOCHAVE ch) {
-  int i = 0;
-  while (i < l->nroElem){
-    if(ch == l->A[i].chave) return i; // achou
-    else i++;
-  }
-  return ERRO; // não achou
-} /* buscaSequencial */
-
-
-/* Busca sequencial em lista COM SENTINELA (vetor criado com MAX+1 posições) */
-int buscaSentinela(LISTA* l, TIPOCHAVE ch) {
-  int i = 0;
-  l->A[l->nroElem].chave = ch; // sentinela
-  while(l->A[i].chave != ch) i++;
-  if (i > l->nroElem -1) return ERRO; // não achou
-  else return i;
-} /* buscaSentinela */
-
-/* Busca sequencial em lista COM SENTINELA (vetor criado com MAX+1 posições) 
-   considerando o arranjo ordenado */
-int buscaSentinelaOrdenada(LISTA* l, TIPOCHAVE ch) {
-  int i = 0;
-  l->A[l->nroElem].chave = ch; // sentinela
-  while(l->A[i].chave < ch) i++;
-  if (i == l->nroElem || l->A[i].chave != ch) return ERRO; // não achou
-  else return i;
-} /* buscaSentinela */
-
 /* Busca binaria em lista ordenada */
 int buscaBinaria(LISTA* l, TIPOCHAVE ch){
   int esq, dir, meio;
@@ -143,19 +112,6 @@ int buscaBinaria(LISTA* l, TIPOCHAVE ch){
   }
   return ERRO;
 } /* buscaBinaria */
-
-
-/* Exclusão do elemento cuja chave seja igual a ch */
-bool excluirElemLista(LISTA* l, TIPOCHAVE ch) { 
-  int pos, j;
-  pos = buscaSequencial(l,ch);
-  if(pos == ERRO) return false; // não existe
-  for(j = pos; j < l->nroElem-1; j++)
-    l->A[j] = l->A[j+1];
-  l->nroElem--;
-  return true;
-} /* excluirElemLista */
-
 
 /* Exclusão do elemento cuja chave seja igual a ch em lista ordenada*/
 bool excluirElemListaOrd(LISTA* l, TIPOCHAVE ch) { 
@@ -177,24 +133,6 @@ bool inserirElemListaOrd(LISTA* l, REGISTRO reg) {
     pos--;
   }
   l->A[pos] = reg;
-  l->nroElem++;
-  return true;
-} /* inserirElemListaOrd */
-
-
-
-/* Inserção em lista ordenada usando busca binária sem duplicação */
-bool inserirElemListaOrdSemDup(LISTA* l, REGISTRO reg) {
-  if(l->nroElem >= MAX) return false; // lista cheia
-  int pos;
-  pos = buscaBinaria(l,reg.chave);
-  if(pos != ERRO) return false; // elemento já existe
-  pos = l->nroElem-1;
-  while(pos>0 && l->A[pos].chave > reg.chave) {
-    l->A[pos+1] = l->A[pos];
-    pos--;
-  }
-  l->A[pos+1] = reg;
   l->nroElem++;
   return true;
 } /* inserirElemListaOrd */
@@ -231,19 +169,13 @@ int main() {
   printf("Tamanho da lista (em bytes): %i.\n", tamanhoEmBytes(&lista));
 
   // Buscar um elemento na lista
-  int pos = buscaSequencial(&lista, 4);
-  printf("Chave 4 encontrada na posicao: %i do arranjo A.\n", pos);
-  
-  pos = buscaBinaria(&lista, 4);
-  printf("Chave 4 encontrada na posicao: %i do arranjo A.\n", pos);
-  
-  pos = buscaSentinela(&lista, 4);
+  int pos = buscaBinaria(&lista, 4);
   printf("Chave 4 encontrada na posicao: %i do arranjo A.\n", pos);
 
   // Excluir alguns elementos da lista
-  if (excluirElemLista(&lista, 4)) printf("Exclusao bem sucedida: 4.\n");
-  if (excluirElemLista(&lista, 8)) printf("Exclusao bem sucedida: 8 (não existe na lista).\n");
-  if (excluirElemLista(&lista, 9)) printf("Exclusao bem sucedida: 9.\n");
+  if (excluirElemListaOrd(&lista, 4)) printf("Exclusao bem sucedida: 4.\n");
+  if (excluirElemListaOrd(&lista, 8)) printf("Exclusao bem sucedida: 8 (não existe na lista).\n");
+  if (excluirElemListaOrd(&lista, 9)) printf("Exclusao bem sucedida: 9.\n");
 
   // Exibir lista após exclusões
   exibirLista(&lista);
