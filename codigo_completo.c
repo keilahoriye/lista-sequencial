@@ -172,12 +172,9 @@ int main() {
   printf("Tamanho da lista (em bytes): %i.\n", tamanhoEmBytes(&lista));
 
   // Solicitar ao usuário
-  printf("Digite o número de elementos que deseja inserir: ");
-  scanf("%d", &numElementos);
-  for (int i=0; i < numElementos; i++) {
-    printf("Digite o %dº elemento: ", i + 1);
-    scanf("%d", &chave);
-    reg.chave = chave;
+  printf("Testando inserir mais elementos que a capacidade:\n");
+  for (int i=0; i < 20; i++) {
+    reg.chave = i + 1;
     inserirElemListaOrd(&lista, reg);
   }
 
@@ -195,16 +192,14 @@ int main() {
   } else {
     printf("Chave %d não encontrada.\n", chave);
   }
-  
-
 
   // Excluir alguns elementos da lista
-  printf("Digite qual elemento quer excluir: ");
-  scanf("%d", &chave);
-  if (excluirElemListaOrd(&lista, chave)) {
-    printf("Exclusao bem sucedida: %d.\n", chave);
-  } else {
-    printf("Elemento %d não encontrado.\n", chave);
+  printf("Testando excluir elementos para chegar a menos que 1/4 da capacidade: ");
+  for (int i=1; i < 15; i++) {
+    chave = i;
+    if (excluirElemListaOrd(&lista, chave)) {
+      printf("Exclusao bem sucedida: %d.\n", chave);
+    }
   }
 
   // Exibir lista após exclusões
