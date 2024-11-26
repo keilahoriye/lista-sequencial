@@ -3,7 +3,7 @@
 #define LISTA_SEQUENCIAL_ORDENADA_H
 
 #include <stdio.h>
-#define MAX 50
+#include <stdlib.h>
 #define ERRO -1
 #define bool int
 #define true 1
@@ -17,8 +17,9 @@ typedef struct {
 } REGISTRO;
 
 typedef struct {
-  REGISTRO A[MAX+1];
+  REGISTRO* A;
   int nroElem;
+  int capacidade;
 } LISTA;
 
 // Declaração das funções
@@ -45,6 +46,9 @@ bool inserirElemListaOrdSemDup(LISTA* l, REGISTRO reg);
 /* Inicialização da lista sequencial (a lista já está criada e é apontada pelo endereço em l) */
 void inicializarLista(LISTA* l){
   l->nroElem = 0;
+  l->capacidade = 10;
+  l->A = (REGISTRO*)malloc(l->capacidade * sizeof(REGISTRO));
+  }
 } /* inicializarLista */
 
 
@@ -85,8 +89,7 @@ TIPOCHAVE ultimoElem(LISTA* l) {
   else return ERRO; // lista vazia
 } /* ultimoElem */
 
-/* Retornar a chave do elemento que está na posição n da LISTA. Lembre-se que as posicoes do
-   arranjo A vao de 0 a MAX-1  */
+/* Retornar a chave do elemento que está na posição n da LISTA. */
 TIPOCHAVE enesimoElem(LISTA* l, int n) {
   if( (n >= 0) && (n < l->nroElem)) return l->A[n].chave ;
   else return ERRO;
@@ -118,15 +121,25 @@ bool excluirElemListaOrd(LISTA* l, TIPOCHAVE ch) {
   int pos, j;
   pos = buscaBinaria(l,ch);
   if(pos == ERRO) return false; // não existe
-  for(j = pos; j < l->nroElem-1; j++) l->A[j] = l->A[j+1];
+  for(j = pos; j < l->nroElem-1; j++)l->A[j] = l->A[j+1];
   l->nroElem--;
+
+  if (l->nroElem <= l->capacidade / 4 && l-> capacidade > 4) {
+    l->capacidade /= 2;
+    l->A = (REGISTRO*)realloc(l->A, l->capacidade * sizeof(REGISTRO));
+  }
+
   return true;
 } /* excluirElemListaOrd */
 
 
 /* Inserção em lista ordenada usando busca binária permitindo duplicação */
 bool inserirElemListaOrd(LISTA* l, REGISTRO reg) {
-  if(l->nroElem >= MAX) return false; // lista cheia
+  if(l->nroElem >= l->capacidade) {
+    l->capacidade *= 2;
+    l->A = (REGISTRO*)realloc(l->A, l->capacidade * sizeof(REGISTRO));
+  }
+    
   int pos = l->nroElem;
   while(pos > 0 && l->A[pos-1].chave > reg.chave) {
     l->A[pos] = l->A[pos-1];
